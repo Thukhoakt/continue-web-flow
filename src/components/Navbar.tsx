@@ -9,7 +9,8 @@ import {
   User, 
   Plus,
   Menu,
-  X
+  X,
+  Users
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
@@ -102,14 +103,25 @@ const Navbar = () => {
             {user ? (
               <div className="flex items-center gap-2">
                 {isAdmin && (
-                  <Button 
-                    onClick={() => navigate('/create-post')}
-                    size="sm"
-                    className="bg-gradient-primary hover:shadow-glow transition-all duration-300"
-                  >
-                    <Plus className="h-4 w-4 mr-1" />
-                    Tạo bài
-                  </Button>
+                  <>
+                    <Button 
+                      onClick={() => navigate('/create-post')}
+                      size="sm"
+                      className="bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Tạo bài
+                    </Button>
+                    <Button 
+                      onClick={() => navigate('/admin/users')}
+                      size="sm"
+                      variant="outline"
+                      className="hover:bg-muted/50"
+                    >
+                      <Users className="h-4 w-4 mr-1" />
+                      User
+                    </Button>
+                  </>
                 )}
                 <Button 
                   variant="ghost"
@@ -170,17 +182,31 @@ const Navbar = () => {
                 {user ? (
                   <div className="space-y-2">
                     {isAdmin && (
-                      <Button 
-                        onClick={() => {
-                          navigate('/create-post');
-                          setIsMobileMenuOpen(false);
-                        }}
-                        size="sm"
-                        className="w-full bg-gradient-primary"
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
-                        Tạo bài viết
-                      </Button>
+                      <>
+                        <Button 
+                          onClick={() => {
+                            navigate('/create-post');
+                            setIsMobileMenuOpen(false);
+                          }}
+                          size="sm"
+                          className="w-full bg-gradient-primary"
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          Tạo bài viết
+                        </Button>
+                        <Button 
+                          onClick={() => {
+                            navigate('/admin/users');
+                            setIsMobileMenuOpen(false);
+                          }}
+                          size="sm"
+                          variant="outline"
+                          className="w-full"
+                        >
+                          <Users className="h-4 w-4 mr-1" />
+                          Quản lý User
+                        </Button>
+                      </>
                     )}
                     <Button 
                       variant="outline"

@@ -13,6 +13,10 @@ import { User } from 'lucide-react';
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
+  const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
@@ -50,7 +54,31 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    const { error } = await signUp(email, password);
+    if (password !== confirmPassword) {
+      toast({
+        title: "Lỗi đăng ký",
+        description: "Mật khẩu không khớp",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "Lỗi đăng ký", 
+        description: "Mật khẩu phải có ít nhất 6 ký tự",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+      return;
+    }
+    
+    const { error } = await signUp(email, password, {
+      full_name: fullName,
+      username: username,
+      phone: phone
+    });
     
     if (error) {
       toast({
@@ -140,6 +168,41 @@ const Auth = () => {
             <TabsContent value="signup" className="mt-6">
               <form onSubmit={handleSignUp} className="space-y-5">
                 <div className="space-y-2">
+                  <Label htmlFor="signup-fullname" className="text-sm font-medium">Họ và tên</Label>
+                  <Input
+                    id="signup-fullname"
+                    type="text"
+                    placeholder="Nguyễn Văn A"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                    className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-username" className="text-sm font-medium">Tên người dùng</Label>
+                  <Input
+                    id="signup-username"
+                    type="text"
+                    placeholder="username123"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-phone" className="text-sm font-medium">Số điện thoại</Label>
+                  <Input
+                    id="signup-phone"
+                    type="tel"
+                    placeholder="0912345678"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="signup-email" className="text-sm font-medium">Email</Label>
                   <Input
                     id="signup-email"
@@ -156,8 +219,21 @@ const Auth = () => {
                   <Input
                     id="signup-password"
                     type="password"
+                    placeholder="Ít nhất 6 ký tự"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-confirm-password" className="text-sm font-medium">Nhập lại mật khẩu</Label>
+                  <Input
+                    id="signup-confirm-password"
+                    type="password"
+                    placeholder="Nhập lại mật khẩu"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                     className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
                   />
