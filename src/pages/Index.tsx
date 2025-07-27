@@ -70,9 +70,10 @@ const Index = () => {
       <header className="border-b backdrop-blur-sm bg-background/80 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-display font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Blog của tôi
-            </h1>
+            <div className="text-4xl font-display font-bold bg-gradient-primary bg-clip-text text-transparent flex items-center gap-3">
+              <span className="font-sans font-light">John</span>
+              <span className="font-display font-bold">Deus</span>
+            </div>
             
             <div className="flex items-center gap-3">
               {user ? (
@@ -114,16 +115,24 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-hero relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <h2 className="text-5xl md:text-6xl font-display font-bold text-white mb-6 animate-fade-up">
-            Chào mừng đến với Blog
-          </h2>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto animate-fade-up" style={{animationDelay: '0.2s'}}>
-            Khám phá những câu chuyện thú vị và chia sẻ kiến thức cùng cộng đồng
-          </p>
+      {/* Hero Section with Cathedral */}
+      <section className="relative h-96 overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('/src/assets/phero-cathedral.jpg')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
+        </div>
+        <div className="relative z-10 h-full flex items-center justify-center">
+          <div className="text-center text-white">
+            <div className="text-6xl md:text-7xl font-display font-bold mb-4 animate-fade-up">
+              <span className="font-sans font-light">John</span>{' '}
+              <span className="font-display font-bold">Deus</span>
+            </div>
+            <div className="w-32 h-1 bg-white/80 mx-auto rounded-full animate-fade-up" style={{animationDelay: '0.3s'}}></div>
+          </div>
         </div>
       </section>
 
