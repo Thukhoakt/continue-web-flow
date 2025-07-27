@@ -65,20 +65,22 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-subtle">
       {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b backdrop-blur-sm bg-background/80 sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">Blog của tôi</h1>
+            <h1 className="text-3xl font-display font-bold bg-gradient-primary bg-clip-text text-transparent">
+              Blog của tôi
+            </h1>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {user ? (
                 <>
                   {isAdmin && (
                     <Button 
                       onClick={() => navigate('/create-post')}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105"
                     >
                       <Plus className="h-4 w-4" />
                       Tạo bài viết
@@ -87,12 +89,12 @@ const Index = () => {
                   <Button 
                     variant="outline"
                     onClick={handleSignOut}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive transition-all duration-300"
                   >
                     <LogOut className="h-4 w-4" />
                     Đăng xuất
                   </Button>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg">
                     <User className="h-4 w-4" />
                     {user.email}
                     {isAdmin && <span className="text-primary font-medium">(Admin)</span>}
@@ -101,7 +103,7 @@ const Index = () => {
               ) : (
                 <Button 
                   onClick={() => navigate('/auth')}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105"
                 >
                   <LogIn className="h-4 w-4" />
                   Đăng nhập
@@ -112,17 +114,31 @@ const Index = () => {
         </div>
       </header>
 
+      {/* Hero Section */}
+      <section className="py-20 bg-gradient-hero relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h2 className="text-5xl md:text-6xl font-display font-bold text-white mb-6 animate-fade-up">
+            Chào mừng đến với Blog
+          </h2>
+          <p className="text-xl text-white/90 max-w-2xl mx-auto animate-fade-up" style={{animationDelay: '0.2s'}}>
+            Khám phá những câu chuyện thú vị và chia sẻ kiến thức cùng cộng đồng
+          </p>
+        </div>
+      </section>
+
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-16">
         {loading ? (
-          <div className="text-center py-12">
-            <p>Đang tải...</p>
+          <div className="text-center py-20">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+            <p className="mt-4 text-muted-foreground">Đang tải...</p>
           </div>
         ) : posts.length === 0 ? (
-          <Card className="text-center py-12">
+          <Card className="text-center py-20 max-w-2xl mx-auto shadow-elegant animate-scale-in">
             <CardHeader>
-              <CardTitle>Chưa có bài viết nào</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-3xl font-display">Chưa có bài viết nào</CardTitle>
+              <CardDescription className="text-lg">
                 {isAdmin 
                   ? "Hãy tạo bài viết đầu tiên của bạn!" 
                   : "Chưa có bài viết nào được xuất bản."
@@ -133,7 +149,7 @@ const Index = () => {
               <CardContent>
                 <Button 
                   onClick={() => navigate('/create-post')}
-                  className="flex items-center gap-2 mx-auto"
+                  className="flex items-center gap-2 mx-auto bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105"
                 >
                   <Plus className="h-4 w-4" />
                   Tạo bài viết đầu tiên
@@ -142,11 +158,23 @@ const Index = () => {
             )}
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <BlogCard key={post.id} post={post} />
-            ))}
-          </div>
+          <>
+            <div className="text-center mb-12">
+              <h3 className="text-3xl font-display font-bold mb-4">Bài viết mới nhất</h3>
+              <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full"></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {posts.map((post, index) => (
+                <div 
+                  key={post.id} 
+                  className="animate-fade-up" 
+                  style={{animationDelay: `${index * 0.1}s`}}
+                >
+                  <BlogCard post={post} />
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </main>
     </div>

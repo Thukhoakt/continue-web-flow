@@ -100,95 +100,122 @@ const CreatePost = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-4xl mx-auto py-6 px-4">
-        <div className="flex items-center gap-4 mb-6">
+    <div className="min-h-screen bg-gradient-subtle">
+      <div className="container max-w-5xl mx-auto py-8 px-4">
+        <div className="flex items-center gap-4 mb-8">
           <Button 
             variant="ghost" 
             onClick={() => navigate('/')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover:bg-muted/50 transition-all duration-300"
           >
             <ArrowLeft className="h-4 w-4" />
             Quay lại
           </Button>
-          <h1 className="text-3xl font-bold">Tạo bài viết mới</h1>
+          <div>
+            <h1 className="text-4xl font-display font-bold bg-gradient-primary bg-clip-text text-transparent">
+              Tạo bài viết mới
+            </h1>
+            <p className="text-muted-foreground mt-1">Chia sẻ câu chuyện của bạn với thế giới</p>
+          </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Thông tin bài viết</CardTitle>
+        <Card className="shadow-elegant border-0 bg-card/50 backdrop-blur-sm animate-scale-in">
+          <CardHeader className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-t-lg">
+            <CardTitle className="text-2xl font-display">Thông tin bài viết</CardTitle>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="title">Tiêu đề</Label>
+          <CardContent className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="space-y-3">
+                <Label htmlFor="title" className="text-base font-medium">Tiêu đề</Label>
                 <Input
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Nhập tiêu đề bài viết..."
                   required
+                  className="text-lg p-4 border-2 focus:border-primary transition-all duration-300"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="excerpt">Mô tả ngắn</Label>
+              <div className="space-y-3">
+                <Label htmlFor="excerpt" className="text-base font-medium">Mô tả ngắn</Label>
                 <Textarea
                   id="excerpt"
                   value={excerpt}
                   onChange={(e) => setExcerpt(e.target.value)}
                   placeholder="Nhập mô tả ngắn về bài viết..."
-                  rows={3}
+                  rows={4}
+                  className="resize-none border-2 focus:border-primary transition-all duration-300"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="featured-image">Ảnh đại diện</Label>
-                <Input
-                  id="featured-image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={isUploading}
-                />
-                {featuredImage && (
-                  <img 
-                    src={featuredImage} 
-                    alt="Preview" 
-                    className="w-full max-w-sm h-48 object-cover rounded-lg mt-2"
+              <div className="space-y-3">
+                <Label htmlFor="featured-image" className="text-base font-medium">Ảnh đại diện</Label>
+                <div className="relative">
+                  <Input
+                    id="featured-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isUploading}
+                    className="file:bg-gradient-primary file:text-white file:border-0 file:rounded-md file:px-4 file:py-2 file:mr-4 hover:file:shadow-glow transition-all duration-300"
                   />
+                  {isUploading && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                </div>
+                {featuredImage && (
+                  <div className="mt-4 relative group">
+                    <img 
+                      src={featuredImage} 
+                      alt="Preview" 
+                      className="w-full max-w-md h-64 object-cover rounded-lg shadow-md group-hover:shadow-lg transition-all duration-300"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 rounded-lg"></div>
+                  </div>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label>Nội dung</Label>
-                <RichTextEditor content={content} onChange={setContent} />
+              <div className="space-y-3">
+                <Label className="text-base font-medium">Nội dung</Label>
+                <div className="border-2 rounded-lg focus-within:border-primary transition-all duration-300">
+                  <RichTextEditor content={content} onChange={setContent} />
+                </div>
               </div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3 p-4 bg-muted/30 rounded-lg">
                 <Switch
                   id="published"
                   checked={published}
                   onCheckedChange={setPublished}
+                  className="data-[state=checked]:bg-gradient-primary"
                 />
-                <Label htmlFor="published">
-                  {published ? 'Xuất bản ngay' : 'Lưu nháp'}
+                <Label htmlFor="published" className="text-base cursor-pointer">
+                  {published ? '🚀 Xuất bản ngay' : '📝 Lưu nháp'}
                 </Label>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex gap-4 pt-6">
                 <Button 
                   type="submit" 
                   disabled={isLoading}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-[1.02] px-8 py-3 text-base"
                 >
-                  <Save className="h-4 w-4" />
-                  {isLoading ? 'Đang lưu...' : (published ? 'Xuất bản' : 'Lưu nháp')}
+                  <Save className="h-5 w-5" />
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Đang lưu...
+                    </div>
+                  ) : (published ? 'Xuất bản' : 'Lưu nháp')}
                 </Button>
                 <Button 
                   type="button" 
                   variant="outline"
                   onClick={() => navigate('/')}
+                  className="px-8 py-3 text-base hover:bg-muted/50 transition-all duration-300"
                 >
                   Hủy
                 </Button>
