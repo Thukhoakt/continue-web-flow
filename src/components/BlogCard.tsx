@@ -16,7 +16,10 @@ interface BlogCardProps {
 
 const BlogCard = ({ post }: BlogCardProps) => {
   return (
-    <Card className="group hover:shadow-elegant transition-all duration-500 cursor-pointer overflow-hidden border-0 bg-card/50 backdrop-blur-sm hover:scale-[1.02] hover:bg-card">
+    <Card 
+      className="group hover:shadow-elegant transition-all duration-500 cursor-pointer overflow-hidden border-0 bg-card/50 backdrop-blur-sm hover:scale-[1.02] hover:bg-card"
+      onClick={() => window.location.href = `/post/${post.id}`}
+    >
       {post.featured_image && (
         <div className="aspect-video w-full overflow-hidden">
           <img 
