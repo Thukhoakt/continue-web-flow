@@ -172,7 +172,7 @@ const PostDetail = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => navigate(`/edit-post/${post.id}`)}
+                onClick={() => navigate(`/create-post?edit=${post.id}`)}
               >
                 <Edit className="h-4 w-4 mr-2" />
                 Sửa

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,9 +20,44 @@ const CreatePost = () => {
   const [published, setPublished] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
   
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const editId = searchParams.get('edit');
+    if (editId) {
+      setEditingPostId(editId);
+      fetchPostForEdit(editId);
+    }
+  }, [searchParams]);
+
+  const fetchPostForEdit = async (postId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('id', postId)
+        .single();
+
+      if (error) throw error;
+
+      setTitle(data.title);
+      setExcerpt(data.excerpt || '');
+      setContent(data.content);
+      setFeaturedImage(data.featured_image || '');
+      setPublished(data.published);
+    } catch (error) {
+      toast({
+        title: "Lỗi",
+        description: "Không thể tải bài viết để chỉnh sửa",
+        variant: "destructive"
+      });
+      navigate('/');
+    }
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -68,19 +103,34 @@ const CreatePost = () => {
 
     setIsLoading(true);
     try {
-      const { error } = await supabase
-        .from('posts')
-        .insert({
-          title,
-          content,
-          excerpt,
-          featured_image: featuredImage || null,
-          author_id: user.id,
-          published
-        });
+      if (editingPostId) {
+        // Update existing post
+        const { error } = await supabase
+          .from('posts')
+          .update({
+            title,
+            content,
+            excerpt,
+            featured_image: featuredImage || null,
+            published
+          })
+          .eq('id', editingPostId);
 
-      if (error) {
-        throw error;
+        if (error) throw error;
+      } else {
+        // Create new post
+        const { error } = await supabase
+          .from('posts')
+          .insert({
+            title,
+            content,
+            excerpt,
+            featured_image: featuredImage || null,
+            author_id: user.id,
+            published
+          });
+
+        if (error) throw error;
       }
 
       toast({
@@ -92,7 +142,7 @@ const CreatePost = () => {
     } catch (error) {
       toast({
         title: "Lỗi",
-        description: "Không thể tạo bài viết. Vui lòng thử lại.",
+        description: `Không thể ${editingPostId ? 'cập nhật' : 'tạo'} bài viết. Vui lòng thử lại.`,
         variant: "destructive"
       });
     }
@@ -113,9 +163,9 @@ const CreatePost = () => {
           </Button>
           <div>
             <h1 className="text-4xl font-display font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Tạo bài viết mới
+              {editingPostId ? 'Chỉnh sửa bài viết' : 'Tạo bài viết mới'}
             </h1>
-            <p className="text-muted-foreground mt-1">Chia sẻ câu chuyện của bạn với thế giới</p>
+            <p className="text-muted-foreground mt-1">{editingPostId ? 'Cập nhật nội dung bài viết' : 'Chia sẻ câu chuyện của bạn với thế giới'}</p>
           </div>
         </div>
 
@@ -209,7 +259,7 @@ const CreatePost = () => {
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       Đang lưu...
                     </div>
-                  ) : (published ? 'Xuất bản' : 'Lưu nháp')}
+                  ) : editingPostId ? (published ? 'Cập nhật & Xuất bản' : 'Cập nhật nháp') : (published ? 'Xuất bản' : 'Lưu nháp')}
                 </Button>
                 <Button 
                   type="button" 
