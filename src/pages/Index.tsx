@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import BlogCard from '@/components/BlogCard';
+import Navbar from '@/components/Navbar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Plus, LogIn, LogOut, User } from 'lucide-react';
@@ -66,54 +67,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
-      {/* Header */}
-      <header className="border-b backdrop-blur-sm bg-background/80 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="text-4xl font-display font-bold bg-gradient-primary bg-clip-text text-transparent flex items-center gap-3">
-              <span className="font-sans font-light">John</span>
-              <span className="font-display font-bold">Deus</span>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              {user ? (
-                <>
-                  {isAdmin && (
-                    <Button 
-                      onClick={() => navigate('/create-post')}
-                      className="flex items-center gap-2 bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Tạo bài viết
-                    </Button>
-                  )}
-                  <Button 
-                    variant="outline"
-                    onClick={handleSignOut}
-                    className="flex items-center gap-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive transition-all duration-300"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Đăng xuất
-                  </Button>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg">
-                    <User className="h-4 w-4" />
-                    {user.email}
-                    {isAdmin && <span className="text-primary font-medium">(Admin)</span>}
-                  </div>
-                </>
-              ) : (
-                <Button 
-                  onClick={() => navigate('/auth')}
-                  className="flex items-center gap-2 bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105"
-                >
-                  <LogIn className="h-4 w-4" />
-                  Đăng nhập
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Navigation */}
+      <Navbar />
 
       {/* Hero Section with Cathedral */}
       <section className="relative h-96 overflow-hidden">
