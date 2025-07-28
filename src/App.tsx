@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
-import SharkSplashScreen from '@/components/SharkSplashScreen';
+import LusionLoader from '@/components/LusionLoader';
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CreatePost from "./pages/CreatePost";
@@ -25,7 +25,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           {showSplash ? (
-            <SharkSplashScreen onComplete={() => setShowSplash(false)} />
+            <LusionLoader onComplete={() => setShowSplash(false)} />
           ) : (
             <BrowserRouter>
               <Routes>
