@@ -87,66 +87,135 @@ export const ParticleBackground = () => {
   );
 };
 
-// Magnetic cursor effect
-export const MagneticCursor = () => {
-  const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClicking, setIsClicking] = useState(false);
+// Animated geometric lines
+export const AnimatedLines = () => {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-      setIsVisible(true);
+    const updateDimensions = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
     };
 
-    const handleMouseLeave = () => {
-      setIsVisible(false);
-    };
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
 
-    const handleMouseDown = () => {
-      setIsClicking(true);
-    };
-
-    const handleMouseUp = () => {
-      setIsClicking(false);
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mousedown', handleMouseDown);
-    document.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mousedown', handleMouseDown);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
+    return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
   return (
-    <>
-      <div
-        className={`fixed w-4 h-4 border border-white/50 rounded-full pointer-events-none z-50 transition-all duration-150 ease-out ${
-          isVisible ? 'opacity-100' : 'opacity-0'
-        } ${isClicking ? 'scale-150' : 'scale-100'}`}
-        style={{
-          left: mousePosition.x - 8,
-          top: mousePosition.y - 8,
-          mixBlendMode: 'difference'
-        }}
-      />
-      <div
-        className={`fixed w-1 h-1 bg-white rounded-full pointer-events-none z-50 transition-all duration-300 ease-out ${
-          isVisible ? 'opacity-100' : 'opacity-0'
-        }`}
-        style={{
-          left: mousePosition.x - 2,
-          top: mousePosition.y - 2,
-          mixBlendMode: 'difference'
-        }}
-      />
-    </>
+    <svg
+      ref={svgRef}
+      className="fixed inset-0 pointer-events-none z-10 opacity-20"
+      width={dimensions.width}
+      height={dimensions.height}
+    >
+      {/* Animated diagonal lines */}
+      <g className="animate-pulse">
+        {Array.from({ length: 8 }, (_, i) => (
+          <line
+            key={i}
+            x1={i * (dimensions.width / 8)}
+            y1="0"
+            x2={i * (dimensions.width / 8) + 200}
+            y2={dimensions.height}
+            stroke="hsl(var(--primary))"
+            strokeWidth="1"
+            opacity="0.1"
+            className="animate-[slide-in-right_4s_ease-in-out_infinite]"
+            style={{
+              animationDelay: `${i * 0.5}s`
+            }}
+          />
+        ))}
+      </g>
+      
+      {/* Flowing curves */}
+      <g>
+        {Array.from({ length: 3 }, (_, i) => (
+          <path
+            key={i}
+            d={`M0,${dimensions.height * (0.3 + i * 0.2)} Q${dimensions.width * 0.25},${dimensions.height * (0.1 + i * 0.2)} ${dimensions.width * 0.5},${dimensions.height * (0.3 + i * 0.2)} T${dimensions.width},${dimensions.height * (0.2 + i * 0.2)}`}
+            stroke="hsl(var(--primary))"
+            strokeWidth="2"
+            fill="none"
+            opacity="0.15"
+            className="animate-[float_6s_ease-in-out_infinite]"
+            style={{
+              animationDelay: `${i * 2}s`
+            }}
+          />
+        ))}
+      </g>
+      
+      {/* Grid pattern */}
+      <defs>
+        <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+          <path d="M 50 0 L 0 0 0 50" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.5" opacity="0.1"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" />
+    </svg>
+  );
+};
+
+// Floating geometric shapes
+export const FloatingShapes = () => {
+  return (
+    <div className="fixed inset-0 pointer-events-none z-5 overflow-hidden">
+      {Array.from({ length: 6 }, (_, i) => (
+        <div
+          key={i}
+          className={`absolute rounded-full border border-primary/10 animate-float`}
+          style={{
+            width: `${100 + i * 50}px`,
+            height: `${100 + i * 50}px`,
+            left: `${Math.random() * 80}%`,
+            top: `${Math.random() * 80}%`,
+            animationDelay: `${i * 1.5}s`,
+            animationDuration: `${8 + i * 2}s`
+          }}
+        />
+      ))}
+      
+      {/* Triangular shapes */}
+      {Array.from({ length: 4 }, (_, i) => (
+        <div
+          key={`triangle-${i}`}
+          className="absolute opacity-5 animate-[float_10s_ease-in-out_infinite]"
+          style={{
+            left: `${20 + i * 20}%`,
+            top: `${10 + i * 15}%`,
+            animationDelay: `${i * 2.5}s`,
+            transform: `rotate(${i * 45}deg)`
+          }}
+        >
+          <svg width="60" height="60" viewBox="0 0 60 60">
+            <polygon
+              points="30,5 55,50 5,50"
+              fill="none"
+              stroke="hsl(var(--primary))"
+              strokeWidth="1"
+            />
+          </svg>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Animated border effect
+export const AnimatedBorder = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
+  return (
+    <div className={`relative group ${className}`}>
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-[slide-in-right_2s_ease-in-out_infinite]" />
+      <div className="relative z-10">
+        {children}
+      </div>
+    </div>
   );
 };
 
@@ -186,7 +255,7 @@ export const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNod
   );
 };
 
-// Magnetic button effect
+// Enhanced magnetic button with geometric effects
 export const MagneticButton = ({ 
   children, 
   className = "",
@@ -198,35 +267,35 @@ export const MagneticButton = ({
   onClick?: () => void;
 } & React.HTMLAttributes<HTMLDivElement>) => {
   const buttonRef = useRef<HTMLDivElement>(null);
-  const [transform, setTransform] = useState('translate3d(0px, 0px, 0px)');
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!buttonRef.current) return;
-
-    const rect = buttonRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-
-    const strength = 0.3;
-    const newTransform = `translate3d(${x * strength}px, ${y * strength}px, 0px)`;
-    setTransform(newTransform);
-  };
-
-  const handleMouseLeave = () => {
-    setTransform('translate3d(0px, 0px, 0px)');
-  };
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div
       ref={buttonRef}
-      className={`cursor-pointer transition-transform duration-300 ease-out ${className}`}
-      style={{ transform }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      className={`relative cursor-pointer transition-all duration-300 ease-out group ${className}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
       {...props}
     >
-      {children}
+      {/* Animated corners */}
+      <div className={`absolute inset-0 transition-all duration-300 ${
+        isHovered ? 'scale-105' : 'scale-100'
+      }`}>
+        <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </div>
+      
+      {/* Glow effect */}
+      <div className={`absolute inset-0 bg-primary/5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ${
+        isHovered ? 'scale-110' : 'scale-100'
+      }`} />
+      
+      <div className="relative z-10">
+        {children}
+      </div>
     </div>
   );
 };

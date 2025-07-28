@@ -6,11 +6,13 @@ import BlogCard from '@/components/BlogCard';
 import Navbar from '@/components/Navbar';
 import { 
   ParticleBackground, 
-  MagneticCursor, 
+  AnimatedLines,
+  FloatingShapes,
   ScrollReveal, 
   MagneticButton, 
   TextReveal,
-  ParallaxContainer 
+  ParallaxContainer,
+  AnimatedBorder
 } from '@/components/LusionEffects';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -77,7 +79,8 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-subtle relative overflow-hidden">
       {/* Lusion Effects */}
       <ParticleBackground />
-      <MagneticCursor />
+      <AnimatedLines />
+      <FloatingShapes />
       
       {/* Navigation */}
       <Navbar />
@@ -134,15 +137,17 @@ const Index = () => {
               </CardHeader>
               {isAdmin && (
                 <CardContent>
-                  <MagneticButton>
-                    <Button 
-                      onClick={() => navigate('/create-post')}
-                      className="flex items-center gap-2 mx-auto bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Tạo bài viết đầu tiên
-                    </Button>
-                  </MagneticButton>
+                  <AnimatedBorder>
+                    <MagneticButton>
+                      <Button 
+                        onClick={() => navigate('/create-post')}
+                        className="flex items-center gap-2 mx-auto bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Tạo bài viết đầu tiên
+                      </Button>
+                    </MagneticButton>
+                  </AnimatedBorder>
                 </CardContent>
               )}
             </Card>
@@ -150,12 +155,14 @@ const Index = () => {
         ) : (
           <>
             <ScrollReveal delay={200}>
-              <div className="text-center mb-12">
-                <h3 className="text-3xl font-display font-bold mb-4">
-                  <TextReveal text="Bài viết mới nhất" delay={0} />
-                </h3>
-                <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full"></div>
-              </div>
+              <AnimatedBorder>
+                <div className="text-center mb-12">
+                  <h3 className="text-3xl font-display font-bold mb-4">
+                    <TextReveal text="Bài viết mới nhất" delay={0} />
+                  </h3>
+                  <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full"></div>
+                </div>
+              </AnimatedBorder>
             </ScrollReveal>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -164,9 +171,11 @@ const Index = () => {
                   key={post.id} 
                   delay={index * 100}
                 >
-                  <MagneticButton className="h-full">
-                    <BlogCard post={post} />
-                  </MagneticButton>
+                  <AnimatedBorder className="h-full">
+                    <MagneticButton className="h-full">
+                      <BlogCard post={post} />
+                    </MagneticButton>
+                  </AnimatedBorder>
                 </ScrollReveal>
               ))}
             </div>
