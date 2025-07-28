@@ -4,6 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import BlogCard from '@/components/BlogCard';
 import Navbar from '@/components/Navbar';
+import { 
+  ParticleBackground, 
+  MagneticCursor, 
+  ScrollReveal, 
+  MagneticButton, 
+  TextReveal,
+  ParallaxContainer 
+} from '@/components/LusionEffects';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Plus, LogIn, LogOut, User } from 'lucide-react';
@@ -66,81 +74,108 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen bg-gradient-subtle relative overflow-hidden">
+      {/* Lusion Effects */}
+      <ParticleBackground />
+      <MagneticCursor />
+      
       {/* Navigation */}
       <Navbar />
 
       {/* Hero Section with Cathedral */}
       <section className="relative h-96 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('/src/assets/phero-cathedral.jpg')`,
-          }}
-        >
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
-        </div>
-        <div className="relative z-10 h-full flex items-center justify-center">
-          <div className="text-center text-white">
-            <div className="text-6xl md:text-7xl font-display font-bold mb-4 animate-fade-up">
-              <span className="font-sans font-light">John</span>{' '}
-              <span className="font-display font-bold">Deus</span>
-            </div>
-            <div className="w-32 h-1 bg-white/80 mx-auto rounded-full animate-fade-up" style={{animationDelay: '0.3s'}}></div>
+        <ParallaxContainer speed={0.3} className="absolute inset-0">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110"
+            style={{
+              backgroundImage: `url('/src/assets/phero-cathedral.jpg')`,
+            }}
+          >
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
           </div>
+        </ParallaxContainer>
+        
+        <div className="relative z-10 h-full flex items-center justify-center">
+          <ScrollReveal delay={300}>
+            <div className="text-center text-white">
+              <div className="text-6xl md:text-7xl font-display font-bold mb-4">
+                <TextReveal text="John" delay={500} />
+                {' '}
+                <TextReveal text="Deus" delay={800} />
+              </div>
+              <div className="w-32 h-1 bg-white/80 mx-auto rounded-full animate-fade-up" style={{animationDelay: '1.2s'}}></div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-16">
+      <main className="container mx-auto px-4 py-16 relative z-10">
         {loading ? (
-          <div className="text-center py-20">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-4 text-muted-foreground">Đang tải...</p>
-          </div>
+          <ScrollReveal>
+            <div className="text-center py-20">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+              <p className="mt-4 text-muted-foreground">Đang tải...</p>
+            </div>
+          </ScrollReveal>
         ) : posts.length === 0 ? (
-          <Card className="text-center py-20 max-w-2xl mx-auto shadow-elegant animate-scale-in">
-            <CardHeader>
-              <CardTitle className="text-3xl font-display">Chưa có bài viết nào</CardTitle>
-              <CardDescription className="text-lg">
-                {isAdmin 
-                  ? "Hãy tạo bài viết đầu tiên của bạn!" 
-                  : "Chưa có bài viết nào được xuất bản."
-                }
-              </CardDescription>
-            </CardHeader>
-            {isAdmin && (
-              <CardContent>
-                <Button 
-                  onClick={() => navigate('/create-post')}
-                  className="flex items-center gap-2 mx-auto bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105"
-                >
-                  <Plus className="h-4 w-4" />
-                  Tạo bài viết đầu tiên
-                </Button>
-              </CardContent>
-            )}
-          </Card>
+          <ScrollReveal>
+            <Card className="text-center py-20 max-w-2xl mx-auto shadow-elegant animate-scale-in backdrop-blur-sm bg-card/80">
+              <CardHeader>
+                <CardTitle className="text-3xl font-display">
+                  <TextReveal text="Chưa có bài viết nào" />
+                </CardTitle>
+                <CardDescription className="text-lg">
+                  {isAdmin 
+                    ? "Hãy tạo bài viết đầu tiên của bạn!" 
+                    : "Chưa có bài viết nào được xuất bản."
+                  }
+                </CardDescription>
+              </CardHeader>
+              {isAdmin && (
+                <CardContent>
+                  <MagneticButton>
+                    <Button 
+                      onClick={() => navigate('/create-post')}
+                      className="flex items-center gap-2 mx-auto bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Tạo bài viết đầu tiên
+                    </Button>
+                  </MagneticButton>
+                </CardContent>
+              )}
+            </Card>
+          </ScrollReveal>
         ) : (
           <>
-            <div className="text-center mb-12">
-              <h3 className="text-3xl font-display font-bold mb-4">Bài viết mới nhất</h3>
-              <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full"></div>
-            </div>
+            <ScrollReveal delay={200}>
+              <div className="text-center mb-12">
+                <h3 className="text-3xl font-display font-bold mb-4">
+                  <TextReveal text="Bài viết mới nhất" delay={0} />
+                </h3>
+                <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full"></div>
+              </div>
+            </ScrollReveal>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {posts.map((post, index) => (
-                <div 
+                <ScrollReveal 
                   key={post.id} 
-                  className="animate-fade-up" 
-                  style={{animationDelay: `${index * 0.1}s`}}
+                  delay={index * 100}
                 >
-                  <BlogCard post={post} />
-                </div>
+                  <MagneticButton className="h-full">
+                    <BlogCard post={post} />
+                  </MagneticButton>
+                </ScrollReveal>
               ))}
             </div>
           </>
         )}
       </main>
+      
+      {/* Ambient overlay */}
+      <div className="fixed inset-0 bg-gradient-to-b from-transparent via-transparent to-background/20 pointer-events-none z-0"></div>
     </div>
   );
 };

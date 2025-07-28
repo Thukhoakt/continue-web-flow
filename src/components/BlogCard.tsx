@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { useNavigate } from 'react-router-dom';
 
 interface BlogCardProps {
   post: {
@@ -15,10 +16,12 @@ interface BlogCardProps {
 }
 
 const BlogCard = ({ post }: BlogCardProps) => {
+  const navigate = useNavigate();
+
   return (
     <Card 
-      className="group hover:shadow-elegant transition-all duration-500 cursor-pointer overflow-hidden border-0 bg-card/50 backdrop-blur-sm hover:scale-[1.02] hover:bg-card"
-      onClick={() => window.location.href = `/post/${post.id}`}
+      className="group hover:shadow-elegant transition-all duration-700 cursor-pointer overflow-hidden border-0 bg-card/50 backdrop-blur-sm hover:scale-[1.02] hover:bg-card relative"
+      onClick={() => navigate(`/post/${post.id}`)}
     >
       {post.featured_image && (
         <div className="aspect-video w-full overflow-hidden">

@@ -138,6 +138,16 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" }
         },
+        "glow": {
+          "0%, 100%": { 
+            "box-shadow": "0 0 5px hsl(var(--primary))",
+            "transform": "scale(1)"
+          },
+          "50%": { 
+            "box-shadow": "0 0 20px hsl(var(--primary)), 0 0 30px hsl(var(--primary))",
+            "transform": "scale(1.02)"
+          }
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -148,6 +158,8 @@ const config: Config = {
         "slide-in-right": "slide-in-right 0.3s ease-out",
         "shimmer": "shimmer 2s infinite",
         "float": "float 3s ease-in-out infinite",
+        "glow": "glow 2s ease-in-out infinite",
+        "magnetic": "magnetic 0.3s cubic-bezier(0.23, 1, 0.32, 1)",
       },
       transitionTimingFunction: {
         'smooth': 'var(--transition-smooth)',

@@ -114,6 +114,7 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
+    cursor: none; /* Hide default cursor for custom cursor effect */
   }
   
   body {

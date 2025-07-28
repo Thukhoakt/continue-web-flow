@@ -16,7 +16,10 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    // Chỉ hiển thị splash screen nếu chưa từng thấy trong session này
+    return !sessionStorage.getItem('splashShown');
+  });
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -25,7 +28,10 @@ const App = () => {
           <Toaster />
           <Sonner />
           {showSplash ? (
-            <LusionLoader onComplete={() => setShowSplash(false)} />
+            <LusionLoader onComplete={() => {
+              setShowSplash(false);
+              sessionStorage.setItem('splashShown', 'true');
+            }} />
           ) : (
             <BrowserRouter>
               <Routes>
