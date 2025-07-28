@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
+import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
 interface MousePosition {
   x: number;
   y: number;
 }
 
-// Particle system for background
+// Particle system for background với mobile optimization
 export const ParticleBackground = () => {
+  const { isMobile } = useDeviceDetection();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
   const particlesRef = useRef<Array<{
@@ -32,16 +34,16 @@ export const ParticleBackground = () => {
 
     const createParticles = () => {
       const particles = [];
-      // Giảm số lượng particles từ 50 xuống 25 để tăng performance
-      const particleCount = window.innerWidth > 768 ? 25 : 15;
+      // Giảm particles trên mobile để tăng performance
+      const particleCount = isMobile ? 8 : (window.innerWidth > 768 ? 25 : 15);
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.3, // Giảm tốc độ
-          vy: (Math.random() - 0.5) * 0.3,
-          size: Math.random() * 1.5 + 0.5, // Giảm kích thước
-          opacity: Math.random() * 0.2 + 0.05 // Giảm opacity
+          vx: (Math.random() - 0.5) * (isMobile ? 0.1 : 0.3), // Chậm hơn trên mobile
+          vy: (Math.random() - 0.5) * (isMobile ? 0.1 : 0.3),
+          size: Math.random() * (isMobile ? 1 : 1.5) + 0.5,
+          opacity: Math.random() * (isMobile ? 0.1 : 0.2) + 0.05
         });
       }
       particlesRef.current = particles;
@@ -83,14 +85,17 @@ export const ParticleBackground = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 opacity-20"
+      className={`fixed inset-0 pointer-events-none z-0 ${
+        isMobile ? 'opacity-5' : 'opacity-20'
+      }`}
       style={{ mixBlendMode: 'screen' }}
     />
   );
 };
 
-// Animated geometric lines
+// Animated geometric lines với mobile optimization
 export const AnimatedLines = () => {
+  const { isMobile } = useDeviceDetection();
   const svgRef = useRef<SVGSVGElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -111,40 +116,44 @@ export const AnimatedLines = () => {
   return (
     <svg
       ref={svgRef}
-      className="fixed inset-0 pointer-events-none z-10 opacity-20"
+      className={`fixed inset-0 pointer-events-none z-10 ${
+        isMobile ? 'opacity-5' : 'opacity-20'
+      }`}
       width={dimensions.width}
       height={dimensions.height}
     >
-      {/* Animated diagonal lines - giảm số lượng từ 8 xuống 4 */}
-      <g className="animate-pulse">
-        {Array.from({ length: 4 }, (_, i) => (
-          <line
-            key={i}
-            x1={i * (dimensions.width / 4)}
-            y1="0"
-            x2={i * (dimensions.width / 4) + 200}
-            y2={dimensions.height}
-            stroke="hsl(var(--primary))"
-            strokeWidth="1"
-            opacity="0.05"
-            className="animate-[slide-in-right_6s_ease-in-out_infinite]"
-            style={{
-              animationDelay: `${i * 1}s`
-            }}
-          />
-        ))}
-      </g>
+      {/* Animated diagonal lines - ẩn hoàn toàn trên mobile */}
+      {!isMobile && (
+        <g className="animate-pulse">
+          {Array.from({ length: 4 }, (_, i) => (
+            <line
+              key={i}
+              x1={i * (dimensions.width / 4)}
+              y1="0"
+              x2={i * (dimensions.width / 4) + 200}
+              y2={dimensions.height}
+              stroke="hsl(var(--primary))"
+              strokeWidth="1"
+              opacity="0.05"
+              className="animate-[slide-in-right_6s_ease-in-out_infinite]"
+              style={{
+                animationDelay: `${i * 1}s`
+              }}
+            />
+          ))}
+        </g>
+      )}
       
-      {/* Flowing curves */}
+      {/* Flowing curves - giảm số lượng trên mobile */}
       <g>
-        {Array.from({ length: 3 }, (_, i) => (
+        {Array.from({ length: isMobile ? 1 : 3 }, (_, i) => (
           <path
             key={i}
             d={`M0,${dimensions.height * (0.3 + i * 0.2)} Q${dimensions.width * 0.25},${dimensions.height * (0.1 + i * 0.2)} ${dimensions.width * 0.5},${dimensions.height * (0.3 + i * 0.2)} T${dimensions.width},${dimensions.height * (0.2 + i * 0.2)}`}
             stroke="hsl(var(--primary))"
             strokeWidth="2"
             fill="none"
-            opacity="0.15"
+            opacity={isMobile ? "0.05" : "0.15"}
             className="animate-[float_6s_ease-in-out_infinite]"
             style={{
               animationDelay: `${i * 2}s`
@@ -153,19 +162,28 @@ export const AnimatedLines = () => {
         ))}
       </g>
       
-      {/* Grid pattern */}
-      <defs>
-        <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-          <path d="M 50 0 L 0 0 0 50" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.5" opacity="0.1"/>
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#grid)" />
+      {/* Grid pattern - ẩn trên mobile */}
+      {!isMobile && (
+        <>
+          <defs>
+            <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+              <path d="M 50 0 L 0 0 0 50" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.5" opacity="0.1"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </>
+      )}
     </svg>
   );
 };
 
-// Floating geometric shapes
+// Floating geometric shapes với mobile optimization
 export const FloatingShapes = () => {
+  const { isMobile } = useDeviceDetection();
+  
+  // Ẩn hoàn toàn floating shapes trên mobile để tăng performance
+  if (isMobile) return null;
+  
   return (
     <div className="fixed inset-0 pointer-events-none z-5 overflow-hidden">
       {Array.from({ length: 3 }, (_, i) => (
