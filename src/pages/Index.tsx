@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import BlogCard from '@/components/BlogCard';
 import Navbar from '@/components/Navbar';
+import { BlogGridSkeleton } from '@/components/ui/blog-skeleton';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   ParticleBackground, 
   AnimatedLines,
@@ -116,9 +118,14 @@ const Index = () => {
       <main className="container mx-auto px-4 py-16 relative z-10">
         {loading ? (
           <ScrollReveal>
-            <div className="text-center py-20">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-              <p className="mt-4 text-muted-foreground">Đang tải...</p>
+            <div className="space-y-8">
+              <div className="text-center mb-12">
+                <div className="text-3xl font-display font-bold mb-4">
+                  <Skeleton className="h-9 w-48 mx-auto" />
+                </div>
+                <Skeleton className="h-1 w-24 mx-auto rounded-full" />
+              </div>
+              <BlogGridSkeleton count={6} />
             </div>
           </ScrollReveal>
         ) : posts.length === 0 ? (

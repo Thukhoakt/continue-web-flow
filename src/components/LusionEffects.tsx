@@ -32,14 +32,16 @@ export const ParticleBackground = () => {
 
     const createParticles = () => {
       const particles = [];
-      for (let i = 0; i < 50; i++) {
+      // Giảm số lượng particles từ 50 xuống 25 để tăng performance
+      const particleCount = window.innerWidth > 768 ? 25 : 15;
+      for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
-          size: Math.random() * 2 + 1,
-          opacity: Math.random() * 0.3 + 0.1
+          vx: (Math.random() - 0.5) * 0.3, // Giảm tốc độ
+          vy: (Math.random() - 0.5) * 0.3,
+          size: Math.random() * 1.5 + 0.5, // Giảm kích thước
+          opacity: Math.random() * 0.2 + 0.05 // Giảm opacity
         });
       }
       particlesRef.current = particles;
@@ -113,21 +115,21 @@ export const AnimatedLines = () => {
       width={dimensions.width}
       height={dimensions.height}
     >
-      {/* Animated diagonal lines */}
+      {/* Animated diagonal lines - giảm số lượng từ 8 xuống 4 */}
       <g className="animate-pulse">
-        {Array.from({ length: 8 }, (_, i) => (
+        {Array.from({ length: 4 }, (_, i) => (
           <line
             key={i}
-            x1={i * (dimensions.width / 8)}
+            x1={i * (dimensions.width / 4)}
             y1="0"
-            x2={i * (dimensions.width / 8) + 200}
+            x2={i * (dimensions.width / 4) + 200}
             y2={dimensions.height}
             stroke="hsl(var(--primary))"
             strokeWidth="1"
-            opacity="0.1"
-            className="animate-[slide-in-right_4s_ease-in-out_infinite]"
+            opacity="0.05"
+            className="animate-[slide-in-right_6s_ease-in-out_infinite]"
             style={{
-              animationDelay: `${i * 0.5}s`
+              animationDelay: `${i * 1}s`
             }}
           />
         ))}
@@ -166,23 +168,23 @@ export const AnimatedLines = () => {
 export const FloatingShapes = () => {
   return (
     <div className="fixed inset-0 pointer-events-none z-5 overflow-hidden">
-      {Array.from({ length: 6 }, (_, i) => (
+      {Array.from({ length: 3 }, (_, i) => (
         <div
           key={i}
-          className={`absolute rounded-full border border-primary/10 animate-float`}
+          className={`absolute rounded-full border border-primary/5 animate-float`}
           style={{
-            width: `${100 + i * 50}px`,
-            height: `${100 + i * 50}px`,
+            width: `${80 + i * 40}px`,
+            height: `${80 + i * 40}px`,
             left: `${Math.random() * 80}%`,
             top: `${Math.random() * 80}%`,
-            animationDelay: `${i * 1.5}s`,
-            animationDuration: `${8 + i * 2}s`
+            animationDelay: `${i * 2}s`,
+            animationDuration: `${10 + i * 2}s`
           }}
         />
       ))}
       
-      {/* Triangular shapes */}
-      {Array.from({ length: 4 }, (_, i) => (
+      {/* Triangular shapes - giảm từ 4 xuống 2 */}
+      {Array.from({ length: 2 }, (_, i) => (
         <div
           key={`triangle-${i}`}
           className="absolute opacity-5 animate-[float_10s_ease-in-out_infinite]"
@@ -219,7 +221,7 @@ export const AnimatedBorder = ({ children, className = "" }: { children: React.R
   );
 };
 
-// Smooth scroll reveal effect
+// Smooth scroll reveal effect với tối ưu hóa
 export const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => {
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
@@ -227,11 +229,14 @@ export const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNod
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !isVisible) {
           setTimeout(() => setIsVisible(true), delay);
         }
       },
-      { threshold: 0.1 }
+      { 
+        threshold: 0.1,
+        rootMargin: '50px' // Trigger sớm hơn để animation mượt hơn
+      }
     );
 
     if (elementRef.current) {
@@ -239,15 +244,15 @@ export const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNod
     }
 
     return () => observer.disconnect();
-  }, [delay]);
+  }, [delay, isVisible]);
 
   return (
     <div
       ref={elementRef}
-      className={`transition-all duration-1000 ease-out ${
+      className={`transition-all duration-700 ease-out ${
         isVisible 
           ? 'opacity-100 translate-y-0' 
-          : 'opacity-0 translate-y-8'
+          : 'opacity-0 translate-y-4'
       }`}
     >
       {children}
