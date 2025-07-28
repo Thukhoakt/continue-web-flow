@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +6,7 @@ import BlogCard from '@/components/BlogCard';
 import Navbar from '@/components/Navbar';
 import { BlogGridSkeleton } from '@/components/ui/blog-skeleton';
 import { Skeleton } from '@/components/ui/skeleton';
+import BlogPagination from '@/components/BlogPagination';
 import { 
   ParticleBackground, 
   AnimatedLines,
@@ -18,6 +19,7 @@ import {
 } from '@/components/LusionEffects';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { usePagination } from '@/hooks/usePagination';
 import { Plus, LogIn, LogOut, User } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -25,9 +27,11 @@ interface Post {
   id: string;
   title: string;
   excerpt: string | null;
+  content?: string;
   featured_image: string | null;
   created_at: string;
   published: boolean;
+  categories?: string[];
 }
 
 const Index = () => {
@@ -35,6 +39,17 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
+  
+  // Pagination logic
+  const pagination = usePagination({ 
+    totalItems: posts.length, 
+    itemsPerPage: 6 
+  });
+  
+  // Get current page posts
+  const currentPosts = useMemo(() => {
+    return posts.slice(pagination.startIndex, pagination.endIndex);
+  }, [posts, pagination.startIndex, pagination.endIndex]);
 
   useEffect(() => {
     fetchPosts();
@@ -173,7 +188,7 @@ const Index = () => {
             </ScrollReveal>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {posts.map((post, index) => (
+              {currentPosts.map((post, index) => (
                 <ScrollReveal 
                   key={post.id} 
                   delay={index * 100}
@@ -186,6 +201,16 @@ const Index = () => {
                 </ScrollReveal>
               ))}
             </div>
+            
+            {/* Pagination */}
+            <BlogPagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              hasNextPage={pagination.hasNextPage}
+              hasPrevPage={pagination.hasPrevPage}
+              onPageChange={pagination.goToPage}
+              getPageNumbers={pagination.getPageNumbers}
+            />
           </>
         )}
       </main>
