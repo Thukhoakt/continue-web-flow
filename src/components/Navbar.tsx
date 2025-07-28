@@ -1,7 +1,12 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { 
   Search, 
   ChevronDown, 
@@ -10,16 +15,22 @@ import {
   Plus,
   Menu,
   X,
-  Users
+  Users,
+  FileText,
+  Video,
+  BookOpen,
+  Layers
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
+import SearchModal from './SearchModal';
 
 const Navbar = () => {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSignOut = async () => {
     await signOut();
@@ -30,13 +41,26 @@ const Navbar = () => {
   };
 
   const menuItems = [
-    { name: 'HOME', path: '/', active: true },
-    { name: 'BLOG', path: '/blog', dropdown: true },
-    { name: 'YOUTUBE', path: '/youtube' },
-    { name: 'Email', path: '/email' },
-    { name: 'TÀI LIỆU', path: '/documents' },
-    { name: 'E-learning', path: '/e-learning' },
+    { name: 'HOME', path: '/', icon: null },
+    { name: 'BLOG', path: '/blog', dropdown: true, icon: FileText },
+    { name: 'YOUTUBE', path: '/youtube', icon: Video },
+    { name: 'Email', path: '/email', icon: null },
+    { name: 'TÀI LIỆU', path: '/documents', icon: BookOpen },
+    { name: 'E-learning', path: '/e-learning', icon: Layers },
   ];
+
+  const blogDropdownItems = [
+    { name: 'Tất cả bài viết', path: '/' },
+    { name: 'Công nghệ', path: '/blog/tech' },
+    { name: 'Lập trình', path: '/blog/programming' },
+    { name: 'Tutorial', path: '/blog/tutorial' },
+    { name: 'Reviews', path: '/blog/reviews' },
+  ];
+
+  const isActivePath = (path: string) => {
+    if (path === '/') return location.pathname === '/';
+    return location.pathname.startsWith(path);
+  };
 
   return (
     <nav className="bg-background/95 backdrop-blur-sm border-b sticky top-0 z-50">
@@ -55,15 +79,44 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             {menuItems.map((item) => (
               <div key={item.name} className="relative group">
-                <button
-                  onClick={() => navigate(item.path)}
-                  className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-primary ${
-                    item.active ? 'text-primary' : 'text-foreground'
-                  }`}
-                >
-                  {item.name}
-                  {item.dropdown && <ChevronDown className="h-3 w-3" />}
-                </button>
+                {item.dropdown ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-primary ${
+                          isActivePath(item.path) ? 'text-primary' : 'text-foreground'
+                        }`}
+                      >
+                        {item.icon && <item.icon className="h-4 w-4 mr-1" />}
+                        {item.name}
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-48 bg-background/95 backdrop-blur-sm border border-border/50">
+                      {blogDropdownItems.map((dropdownItem) => (
+                        <DropdownMenuItem
+                          key={dropdownItem.name}
+                          onClick={() => navigate(dropdownItem.path)}
+                          className={`cursor-pointer transition-colors ${
+                            isActivePath(dropdownItem.path) ? 'bg-primary/10 text-primary' : ''
+                          }`}
+                        >
+                          {dropdownItem.name}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <button
+                    onClick={() => navigate(item.path)}
+                    className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-primary ${
+                      isActivePath(item.path) ? 'text-primary' : 'text-foreground'
+                    }`}
+                  >
+                    {item.icon && <item.icon className="h-4 w-4 mr-1" />}
+                    {item.name}
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -71,33 +124,14 @@ const Navbar = () => {
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
             {/* Search */}
-            <div className="relative">
-              {isSearchOpen ? (
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Tìm kiếm..."
-                    className="w-64 transition-all duration-300"
-                    autoFocus
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsSearchOpen(false)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsSearchOpen(true)}
-                  className="hover:bg-muted/50"
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsSearchModalOpen(true)}
+              className="hover:bg-muted/50"
+            >
+              <Search className="h-4 w-4" />
+            </Button>
 
             {/* User Actions */}
             {user ? (
@@ -164,18 +198,45 @@ const Navbar = () => {
           <div className="md:hidden py-4 border-t animate-fade-in">
             <div className="flex flex-col space-y-3">
               {menuItems.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => {
-                    navigate(item.path);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`text-left px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-primary ${
-                    item.active ? 'text-primary' : 'text-foreground'
-                  }`}
-                >
-                  {item.name}
-                </button>
+                <div key={item.name}>
+                  {item.dropdown ? (
+                    <div className="space-y-2">
+                      <div className={`px-3 py-2 text-sm font-medium ${
+                        isActivePath(item.path) ? 'text-primary' : 'text-foreground'
+                      }`}>
+                        {item.name}
+                      </div>
+                      <div className="pl-4 space-y-2">
+                        {blogDropdownItems.map((dropdownItem) => (
+                          <button
+                            key={dropdownItem.name}
+                            onClick={() => {
+                              navigate(dropdownItem.path);
+                              setIsMobileMenuOpen(false);
+                            }}
+                            className={`block text-left w-full px-3 py-2 text-sm transition-colors duration-200 hover:text-primary ${
+                              isActivePath(dropdownItem.path) ? 'text-primary' : 'text-muted-foreground'
+                            }`}
+                          >
+                            {dropdownItem.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        navigate(item.path);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`text-left px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-primary ${
+                        isActivePath(item.path) ? 'text-primary' : 'text-foreground'
+                      }`}
+                    >
+                      {item.name}
+                    </button>
+                  )}
+                </div>
               ))}
               
               <div className="border-t pt-3 mt-3">
@@ -238,6 +299,11 @@ const Navbar = () => {
           </div>
         )}
       </div>
+      
+      <SearchModal 
+        isOpen={isSearchModalOpen} 
+        onClose={() => setIsSearchModalOpen(false)} 
+      />
     </nav>
   );
 };
